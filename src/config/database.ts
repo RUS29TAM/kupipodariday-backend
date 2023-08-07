@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { OfferEntity } from '../entities/offer.entity';
 
 interface DatabaseConfig {
   host: string;
@@ -25,6 +26,6 @@ export const getDatabaseConfig = (
   return {
     type: 'postgres',
     ...databaseConfig,
-    entities: [],
+    entities: [OfferEntity],
   };
 };
