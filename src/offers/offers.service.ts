@@ -5,22 +5,22 @@ import { UpdateOfferDto } from './dto/update-offer.dto';
 @Injectable()
 export class OffersService {
   create(createOfferDto: CreateOfferDto) {
-    return 'This action adds a new offer';
+    return 'Это действие добавляет новое предложение';
   }
 
   findAll() {
-    return `This action returns all offers`;
+    return `Это действие возвращает все предложения`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} offer`;
+    return `Это действие возвращает #${id} предложение`;
   }
 
   update(id: number, updateOfferDto: UpdateOfferDto) {
-    return `This action updates a #${id} offer`;
+    return `Это действие обновляет #${id} предложение`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} offer`;
+    return `Это действие удаляет #${id} предложение`;
   }
 }

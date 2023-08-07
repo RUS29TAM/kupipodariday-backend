@@ -5,22 +5,22 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 @Injectable()
 export class WishesService {
   create(createWishDto: CreateWishDto) {
-    return 'This action adds a new wish';
+    return 'Это действие добавляет новое желание';
   }
 
   findAll() {
-    return `This action returns all wishes`;
+    return `Это действие возвращает все пожелания`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} wish`;
+    return `Это действие возвращает #${id} пожелания`;
   }
 
   update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+    return `Это действие обновляет #${id} пожелание`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} wish`;
+    return `Это действие удаляет #${id} пожелание`;
   }
 }

@@ -5,11 +5,11 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 @Injectable()
 export class WishlistsService {
   create(createWishlistDto: CreateWishlistDto) {
-    return 'This action adds a new wishlist';
+    return 'Это действие добавляет новый список желаний';
   }
 
   findAll() {
-    return `This action returns all wishlists`;
+    return `Это действие возвращает все списки желаний`;
   }
 
   findOne(id: number) {
@@ -17,10 +17,10 @@ export class WishlistsService {
   }
 
   update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return `This action updates a #${id} wishlist`;
+    return `Это действие возвращает список #${id} желаний`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} wishlist`;
+    return `Это действие удаляет список #${id} желаний`;
   }
 }
