@@ -1,38 +1,22 @@
-import { IsInt, IsDate, IsNotEmpty, IsString } from 'class-validator';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Column,
-} from 'typeorm';
+import { BaseEntity } from 'src/entities/base.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { IsBoolean, IsNumber } from 'class-validator';
+import { User } from './user.entity';
+import { Wish } from './wish.entity';
 
 @Entity()
-export class OfferEntity {
-  @PrimaryGeneratedColumn()
-  @IsInt()
-  id: number;
+export class Offer extends BaseEntity {
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @IsNumber()
+  amount: number;
 
-  @CreateDateColumn()
-  @IsDate()
-  createdAt: Date;
+  @Column({ default: false })
+  @IsBoolean()
+  hidden: boolean;
 
-  @UpdateDateColumn()
-  @IsDate()
-  updatedAt: Date;
+  @ManyToOne(() => User, (user) => user.offers)
+  user: User;
 
-  @Column()
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @Column()
-  @IsNotEmpty()
-  @IsString()
-  description: string;
-
-  @Column()
-  @IsNotEmpty()
-  @IsInt()
-  price: number;
+  @ManyToOne(() => Wish, (wish) => wish.offers)
+  item: Wish;
 }
