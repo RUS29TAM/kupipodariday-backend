@@ -1,8 +1,7 @@
 import {
   IsString,
   IsEmail,
-  MaxLength,
-  MinLength,
+  Length,
   IsNotEmpty,
   IsUrl,
   IsOptional,
@@ -10,8 +9,7 @@ import {
 
 export class CreateUserDto {
   @IsString()
-  @MaxLength(64)
-  @MinLength(1)
+  @Length(1, 64)
   @IsNotEmpty()
   username: string;
 
@@ -19,12 +17,12 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @MinLength(2)
+  @Length(2)
   @IsNotEmpty()
   password: string;
 
   @IsString()
-  @MaxLength(200)
+  @Length(1, 200)
   @IsOptional()
   about?: string;
 
