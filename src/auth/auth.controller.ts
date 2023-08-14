@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'typeorm';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Controller('auth')
@@ -17,7 +17,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post()
-  async create(@Body() createAuthDto: CreateAuthDto): Promise<Auth> {
+  async create(@Body() createAuthDto: CreateUserDto): Promise<Auth> {
     return await this.authService.create(createAuthDto);
   }
 

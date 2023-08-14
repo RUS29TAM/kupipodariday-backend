@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 
 interface Auth {
@@ -12,7 +12,7 @@ interface Auth {
 export class AuthService {
   private readonly auths: Auth[] = [];
 
-  create(createAuthDto: CreateAuthDto): Auth {
+  create(createAuthDto: CreateUserDto): Auth {
     const auth: { id: number } = {
       id: this.auths.length + 1,
       ...createAuthDto,
