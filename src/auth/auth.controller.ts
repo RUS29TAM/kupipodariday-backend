@@ -11,13 +11,16 @@ import { Auth } from 'typeorm';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { SigninUserRespDto } from './dto/signin-user-resp.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  async signin(@Body() createUserDto: CreateUserDto): Promise<Auth> {
+  @Post('signup')
+  async signup(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<SigninUserRespDto> {
     return; //await this.authService.create(createAuthDto);
   }
   //
