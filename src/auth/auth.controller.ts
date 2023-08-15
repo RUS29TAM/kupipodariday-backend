@@ -12,10 +12,16 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { SigninUserRespDto } from './dto/signin-user-resp.dto';
+import { SigninUserDto } from './dto/signin-user.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('signin')
+  async signin(@Body() signinUserDto: SigninUserDto): Promise<string> {
+    return 'signin';
+  }
 
   @Post('signup')
   async signup(
