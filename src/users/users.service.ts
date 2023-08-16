@@ -6,6 +6,7 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { HashService } from '../hash/hash.service';
 import { ServerException } from '../exceptions/server.exception';
 import { ErrorCode } from '../exceptions/errors';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,16 @@ export class UsersService {
       }
     }
   }
-
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const newUserData = updateUserDto.hasOwnProperty('password')
+      ? await this.hashService.getUserWithHash<UpdateUserDto>(updateUserDto)
+      : updateUserDto;
+    const user = await this.usersRepository.update(id, newUserData);
+    if (user.affected === 0) {
+      throw new ServerException(ErrorCode.UpdateError);
+    }
+    return this.findById(id);
+  }
   async findById(id: number) {
     const user = await this.usersRepository.findOneBy({ id });
     return user;
