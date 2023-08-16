@@ -36,6 +36,11 @@ export class UsersController {
   async findCurrentUserWishes(@Request() { user: { id } }) {
     return this.usersService.findWishes(id);
   }
+
+  @Get(':username')
+  async findUser(@Param() username: string) {
+    return this.usersService.findByUserName(username);
+  }
   // @Post()
   // create(@Body() createUserDto: CreateUserDto) {
   //   return this.usersService.create(createUserDto);
