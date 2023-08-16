@@ -46,10 +46,11 @@ export class UsersController {
   //   return this.usersService.create(createUserDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
+  @Get('username/wishes')
+  async findUserWishes(@Param() username: string) {
+    const { id } = await this.usersService.findByUserName(username);
+    return await this.usersService.findWishes(id);
+  }
   //
   // @Get(':id')
   // findOne(@Param('id') id: string) {
@@ -65,9 +66,4 @@ export class UsersController {
   ): Promise<UserProfileRespDto> {
     return await this.usersService.update(id, updateUserDto);
   }
-  //
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
 }
