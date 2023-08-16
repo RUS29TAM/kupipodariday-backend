@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Auth } from 'typeorm';
 import { AuthService } from './auth.service';
@@ -18,6 +19,7 @@ import { SigninUserDto } from './dto/signin-user.dto';
 import { UsersService } from '../users/users.service';
 import { SignupUserRespDto } from './dto/signup-user-resp.dto';
 import { LocalGuard } from './guards/local.guard';
+import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
 
 @Controller()
 export class AuthController {
@@ -32,33 +34,11 @@ export class AuthController {
     return this.authService.auth(user);
   }
 
+  @UseInterceptors(PasswordUserInterceptor)
   @Post('signup')
   async signup(
     @Body() createUserDto: CreateUserDto,
   ): Promise<SignupUserRespDto> {
     return await this.usersService.create(createUserDto);
   }
-  //
-  // @Get()
-  // async findAll(): Promise<Auth[]> {
-  //   return await this.authService.findAll();
-  // }
-  //
-  // @Get(':id')
-  // async findOne(@Param('id') id: string): Promise<Auth> {
-  //   return await this.authService.findOne(+id);
-  // }
-  //
-  // @Patch(':id')
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateAuthDto: UpdateAuthDto,
-  // ): Promise<Auth> {
-  //   return await this.authService.update(+id, updateAuthDto);
-  // }
-  //
-  // @Delete(':id')
-  // async remove(@Param('id') id: string) {
-  //   return await this.authService.remove(+id);
-  // }
 }
