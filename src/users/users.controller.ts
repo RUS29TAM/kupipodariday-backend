@@ -7,7 +7,9 @@ import {
   Param,
   Delete,
   Request,
-  UseGuards, UseInterceptors,
+  UseGuards,
+  UseInterceptors,
+  UseFilters,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +17,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { UserProfileRespDto } from '../auth/dto/user-profile-resp.dto';
 import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
+import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.filter';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -44,6 +47,7 @@ export class UsersController {
   // }
   //
   @Patch('me')
+  @UseFilters(InvalidDataExceptionFilter)
   @UseInterceptors(PasswordUserInterceptor)
   async updateCurrentUser(
     @Request() { user: { id } },
