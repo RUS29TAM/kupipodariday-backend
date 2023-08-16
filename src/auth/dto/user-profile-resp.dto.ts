@@ -1,13 +1,13 @@
 import {
-  IsString,
-  Length,
-  IsUrl,
-  IsDate,
   IsEmail,
   IsInt,
+  IsString,
+  IsUrl,
+  Length,
+  IsDate,
 } from 'class-validator';
 
-export class SignupUserRespDto {
+export class UserProfileRespDto {
   @IsInt()
   id: number;
 
