@@ -1,10 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { HashService } from '../hash/hash.service';
+import { ServerException } from '../exceptions/server.exception';
+import { ErrorCode } from '../exceptions/errors';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,7 @@ export class UsersService {
       return rest;
     } catch (err) {
       if (err instanceof QueryFailedError) {
-        throw new ConflictException();
+        throw new ServerException(ErrorCode.UserAlreadyExists);
       }
     }
   }
