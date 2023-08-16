@@ -13,10 +13,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { SigninUserRespDto } from './dto/signin-user-resp.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
+import { UsersService } from '../users/users.service';
+import { SignupUserRespDto } from './dto/signup-user-resp.dto';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('signin')
   async signin(@Body() signinUserDto: SigninUserDto): Promise<string> {
@@ -26,8 +31,8 @@ export class AuthController {
   @Post('signup')
   async signup(
     @Body() createUserDto: CreateUserDto,
-  ): Promise<SigninUserRespDto> {
-    return; //await this.authService.create(createAuthDto);
+  ): Promise<SignupUserRespDto> {
+    return await this.usersService.create(createUserDto);
   }
   //
   // @Get()

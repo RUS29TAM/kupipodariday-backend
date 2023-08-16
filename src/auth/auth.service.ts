@@ -12,10 +12,35 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
+  private bcrypt: any;
   constructor(
     private jwtService: JwtService,
     private userService: UsersService,
-  ) {}
+  ) {
+    this.bcrypt = require('bcrypt');
+  }
+
+  async validatePassword(username: string, password: string) {
+    try {
+      const user = await this.userService.findByUserName(username);
+
+      if (user) {
+        const isPasswordValid = await this.bcrypt.compare(
+          password,
+          user.password,
+        );
+
+        if (isPasswordValid) {
+          return { id: user.id, username: user.username };
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Ошибка валидации пароля:', error);
+      throw new Error('Ошибка валидации пароля');
+    }
+  }
 }
 
 // @Injectable()
