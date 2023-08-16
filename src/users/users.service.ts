@@ -7,6 +7,7 @@ import { HashService } from '../hash/hash.service';
 import { ServerException } from '../exceptions/server.exception';
 import { ErrorCode } from '../exceptions/errors';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Wish } from '../entities/wish.entity';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +30,7 @@ export class UsersService {
       }
     }
   }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const newUserData = updateUserDto.hasOwnProperty('password')
       ? await this.hashService.getUserWithHash<UpdateUserDto>(updateUserDto)
@@ -39,6 +41,15 @@ export class UsersService {
     }
     return this.findById(id);
   }
+
+  async findWishes(id: number): Promise<Wish[]> {
+    const { wishes } = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['wishes', 'wishes.owner'],
+    });
+    return wishes;
+  }
+
   async findById(id: number) {
     const user = await this.usersRepository.findOneBy({ id });
     return user;

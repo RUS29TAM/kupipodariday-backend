@@ -31,6 +31,11 @@ export class UsersController {
   ): Promise<UserProfileRespDto> {
     return await this.usersService.findById(id);
   }
+
+  @Get('me/wishes')
+  async findCurrentUserWishes(@Request() { user: { id } }) {
+    return this.usersService.findWishes(id);
+  }
   // @Post()
   // create(@Body() createUserDto: CreateUserDto) {
   //   return this.usersService.create(createUserDto);
