@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class PasswordUserInterceptor implements NestInterceptor {
@@ -12,6 +12,11 @@ export class PasswordUserInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    return;
+    return next.handle().pipe(
+      map((data) => {
+        const { password, ...rest } = data;
+        return rest;
+      }),
+    );
   }
 }

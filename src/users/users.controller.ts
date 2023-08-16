@@ -7,13 +7,14 @@ import {
   Param,
   Delete,
   Request,
-  UseGuards,
+  UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { UserProfileRespDto } from '../auth/dto/user-profile-resp.dto';
+import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -21,11 +22,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
+  @UseInterceptors(PasswordUserInterceptor)
   async findCurrentUser(
     @Request() { user: { id } },
   ): Promise<UserProfileRespDto> {
-    const { password, ...rest } = id;
-    return rest;
+    return await this.usersService.findById(id);
   }
   // @Post()
   // create(@Body() createUserDto: CreateUserDto) {
@@ -43,13 +44,12 @@ export class UsersController {
   // }
   //
   @Patch('me')
+  @UseInterceptors(PasswordUserInterceptor)
   async updateCurrentUser(
     @Request() { user: { id } },
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserProfileRespDto> {
-    const user = await this.usersService.update(id, updateUserDto);
-    const { password, ...rest } = user;
-    return rest;
+    return await this.usersService.update(id, updateUserDto);
   }
   //
   // @Delete(':id')
