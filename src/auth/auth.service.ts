@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { User } from '../entities/user.entity';
+import { ServerException } from '../exceptions/server.exception';
+import { ErrorCode } from '../exceptions/errors';
 
 // interface Auth {
 //   id: number;
@@ -18,6 +19,11 @@ export class AuthService {
     private userService: UsersService,
   ) {
     this.bcrypt = require('bcrypt');
+  }
+
+  async auth(user: User) {
+    const payload = { sub: user.id };
+    return { access_token: this.jwtService.sign(payload) };
   }
 
   async validatePassword(username: string, password: string) {
@@ -38,7 +44,7 @@ export class AuthService {
       return null;
     } catch (error) {
       console.error('Ошибка валидации пароля:', error);
-      throw new Error('Ошибка валидации пароля');
+      throw new ServerException(ErrorCode.LoginOrPasswordIncorrect);
     }
   }
 }

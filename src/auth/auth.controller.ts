@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { Auth } from 'typeorm';
 import { AuthService } from './auth.service';
@@ -15,6 +17,7 @@ import { SigninUserRespDto } from './dto/signin-user-resp.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { UsersService } from '../users/users.service';
 import { SignupUserRespDto } from './dto/signup-user-resp.dto';
+import { LocalGuard } from './guards/local.guard';
 
 @Controller()
 export class AuthController {
@@ -23,9 +26,10 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
+  @UseGuards(LocalGuard)
   @Post('signin')
-  async signin(@Body() signinUserDto: SigninUserDto): Promise<string> {
-    return 'signin';
+  async signin(@Request() { user }): Promise<any> {
+    return this.authService.auth(user);
   }
 
   @Post('signup')
