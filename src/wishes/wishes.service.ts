@@ -21,6 +21,10 @@ export class WishesService {
     return await this.wishRepository.save({ ...createWishDto, owner: rest });
   }
 
+  async update(id: number, updateData: any) {
+    await this.wishRepository.update(id, updateData);
+  }
+
   async findLast() {
     const wishes = await this.wishRepository.find({
       order: { createdAt: 'desc' },
