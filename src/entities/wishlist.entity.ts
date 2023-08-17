@@ -1,9 +1,8 @@
-import { BaseEntity } from 'src/entities/base.entity';
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, JoinTable } from 'typeorm';
 import { IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import { User } from './user.entity';
 import { Wish } from './wish.entity';
-import { JoinTable } from 'typeorm/browser';
+import { BaseEntity } from 'src/entities/base.entity';
 
 @Entity()
 export class Wishlist extends BaseEntity {
