@@ -41,6 +41,10 @@ export class OffersService {
         throw new ServerException(ErrorCode.RaisedForbidden);
       }
 
+      await this.wishesService.raisedUpdate(createOfferDto.itemId, {
+        raised: totalRaised,
+      });
+
       const offer = await this.offerRepository.save({
         ...createOfferDto,
         item,
