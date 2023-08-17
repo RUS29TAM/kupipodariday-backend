@@ -18,6 +18,7 @@ import { JwtGuard } from '../auth/guards/jwt.guard';
 import { UserProfileRespDto } from '../auth/dto/user-profile-resp.dto';
 import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
 import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.filter';
+import { FindUserDto } from './dto/find-user.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -37,6 +38,14 @@ export class UsersController {
   @Get('me/wishes')
   async findCurrentUserWishes(@Request() { user: { id } }) {
     return this.usersService.findWishes(id);
+  }
+
+  @UseInterceptors(PasswordUserInterceptor)
+  @Post('find')
+  async searchUser(
+    @Body() { query }: FindUserDto,
+  ): Promise<UserProfileRespDto[]> {
+    return await this.usersService.search(query);
   }
 
   @UseInterceptors(PasswordUserInterceptor)

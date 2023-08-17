@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { QueryFailedError, Repository } from 'typeorm';
-import { HashService } from '../hash/hash.service';
-import { ServerException } from '../exceptions/server.exception';
-import { ErrorCode } from '../exceptions/errors';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Wish } from '../entities/wish.entity';
+import {Injectable} from '@nestjs/common';
+import {CreateUserDto} from './dto/create-user.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {User} from '../entities/user.entity';
+import {QueryFailedError, Repository} from 'typeorm';
+import {HashService} from '../hash/hash.service';
+import {ServerException} from '../exceptions/server.exception';
+import {ErrorCode} from '../exceptions/errors';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {Wish} from '../entities/wish.entity';
 
 @Injectable()
 export class UsersService {
@@ -45,6 +45,17 @@ export class UsersService {
       relations: ['wishes', 'wishes.owner'],
     });
     return wishes;
+  }
+
+  async search(query: string) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const user = emailRegex.test(query)
+      ? await this.findByEmail(query)
+      : await this.findByUserName(query);
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+    return [user];
   }
 
   async findById(id: number) {
