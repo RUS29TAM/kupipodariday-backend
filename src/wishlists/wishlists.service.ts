@@ -56,4 +56,24 @@ export class WishlistsService {
     }
     return wishlists;
   }
+
+  async findById(id: number) {
+    const wishlist = await this.wishlistRepository.findOne({
+      where: { id },
+      relations: ['owner', 'items'],
+    });
+    if (!wishlist) {
+      throw new ServerException(ErrorCode.WishlistsNotFound);
+    }
+    return wishlist;
+  }
+
+  async delete(userId: number, wishListId: number) {
+    const wishlist = await this.findById(wishListId);
+
+    if (userId !== wishlist.owner.id) {
+      throw new ServerException(ErrorCode.DeleteForbidden);
+    }
+    return await this.wishlistRepository.delete(wishListId);
+  }
 }

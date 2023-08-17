@@ -7,7 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Request, UseInterceptors,
+  Request,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -28,11 +29,25 @@ export class WishlistsController {
     return await this.wishlistsService.findAll();
   }
 
+  @UseInterceptors(PasswordWishInterceptor)
+  @Get(':id')
+  async getWishList(@Param('id') id: number): Promise<Wishlist> {
+    return await this.wishlistsService.findById(id);
+  }
+
   @Post()
   async create(
     @Request() { user: { id } },
     @Body() createWishlistDto: CreateWishlistDto,
   ): Promise<Wishlist> {
     return await this.wishlistsService.create(id, createWishlistDto);
+  }
+
+  @Delete(':id')
+  async deleteWishList(
+    @Request() { user: { id } },
+    @Param('id') wishListId: number,
+  ) {
+    return await this.wishlistsService.delete(id, wishListId);
   }
 }
