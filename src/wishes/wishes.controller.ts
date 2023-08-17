@@ -13,6 +13,7 @@ import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { PasswordWishInterceptor } from '../interceptors/password-wish.interceptor';
+import { Wish } from '../entities/wish.entity';
 
 @UseGuards(JwtGuard)
 @Controller('wishes')
@@ -41,6 +42,14 @@ export class WishesController {
     @Body() createWishDto: CreateWishDto,
   ) {
     return await this.wishesService.create(id, createWishDto);
+  }
+
+  @Post(':id/copy')
+  async copy(
+    @Request() { user: { id } },
+    @Param('id') wishId: number,
+  ): Promise<Wish> {
+    return await this.wishesService.copy(id, wishId);
   }
 
   @Delete(':id')

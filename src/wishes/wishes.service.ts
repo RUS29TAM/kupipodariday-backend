@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from '../entities/wish.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { ServerException } from '../exceptions/server.exception';
 import { ErrorCode } from '../exceptions/errors';
@@ -13,7 +13,9 @@ export class WishesService {
     @InjectRepository(Wish)
     private wishRepository: Repository<Wish>,
     private usersService: UsersService,
+    private readonly dataSource: DataSource,
   ) {}
+
   async create(ownerId: number, createWishDto: CreateWishDto) {
     const { password, ...rest } = await this.usersService.findById(ownerId);
     return await this.wishRepository.save({ ...createWishDto, owner: rest });
@@ -56,5 +58,33 @@ export class WishesService {
       throw new ServerException(ErrorCode.Forbidden);
     }
     return await this.wishRepository.delete(wishId);
+  }
+
+  async copy(userId: number, wishId: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const { id, createdAt, updatedAt, owner, ...wish } = await this.findById(
+        wishId,
+      );
+      const copiedWish = await this.create(userId, wish);
+
+      await this.wishRepository.update(wishId, {
+        copied: copiedWish.copied + 1,
+      });
+
+      await queryRunner.commitTransaction();
+
+      return copiedWish;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+
+      throw err; // Пробросим ошибку дальше для обработки на вышестоящем уровне
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
