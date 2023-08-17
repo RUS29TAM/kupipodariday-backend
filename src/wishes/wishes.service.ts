@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWishDto } from './dto/create-wish.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Wish } from '../entities/wish.entity';
-import { DataSource, Repository } from 'typeorm';
-import { UsersService } from '../users/users.service';
-import { ServerException } from '../exceptions/server.exception';
-import { ErrorCode } from '../exceptions/errors';
+import {ForbiddenException, Injectable} from '@nestjs/common';
+import {CreateWishDto} from './dto/create-wish.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Wish} from '../entities/wish.entity';
+import {DataSource, Repository} from 'typeorm';
+import {UsersService} from '../users/users.service';
+import {ServerException} from '../exceptions/server.exception';
+import {ErrorCode} from '../exceptions/errors';
 
 @Injectable()
 export class WishesService {
@@ -17,12 +17,40 @@ export class WishesService {
   ) {}
 
   async create(ownerId: number, createWishDto: CreateWishDto) {
-    const { password, ...rest } = await this.usersService.findById(ownerId);
-    return await this.wishRepository.save({ ...createWishDto, owner: rest });
+    try {
+      const { password, ...rest } = await this.usersService.findById(ownerId);
+      return await this.wishRepository.save({ ...createWishDto, owner: rest });
+    } catch {
+      throw new ServerException(ErrorCode.SaveError);
+    }
   }
 
-  async update(id: number, updateData: any) {
-    await this.wishRepository.update(id, updateData);
+  async raisedUpdate(id: number, updateData: any) {
+    const wish = await this.wishRepository.update(id, updateData);
+
+    if (wish.affected === 0) {
+      throw new ServerException(ErrorCode.UpdateError);
+    }
+  }
+
+  async update(userId: number, wishId: number, updateData: any) {
+    const wish = await this.findById(wishId);
+    if (userId !== wish.owner.id) {
+      throw new ForbiddenException('Вы не можете обновлять чужие подарки');
+    }
+
+    if (updateData.hasOwnProperty('price') && wish.raised > 0) {
+      throw new ForbiddenException('Вы не можете обновить стоимость');
+    }
+
+    const resultWishUpdate = await this.wishRepository.update(
+      wishId,
+      updateData,
+    );
+
+    if (resultWishUpdate.affected === 0) {
+      throw new ServerException(ErrorCode.UpdateError);
+    }
   }
 
   async getWishListById(ids: number[]): Promise<Wish[]> {
@@ -63,9 +91,32 @@ export class WishesService {
   async findById(id: number) {
     const wish = await this.wishRepository.findOne({
       where: { id },
+      relations: ['owner'],
+    });
+
+    if (!wish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+    return wish;
+  }
+
+  async findByIdWithOffer(userId: number, id: number) {
+    const wish = await this.wishRepository.findOne({
+      where: { id },
       relations: ['owner', 'offers', 'offers.user'],
     });
-    return wish;
+
+    if (!wish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+
+    if (userId === wish.owner.id) {
+      return wish;
+    } else {
+      const filteredOffers = wish.offers.filter((offer) => !offer.hidden);
+      wish.offers = filteredOffers;
+      return wish;
+    }
   }
 
   async delete(userId: number, wishId: number) {

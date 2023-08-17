@@ -21,26 +21,29 @@ export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
   @Get('last')
-  async getLastWish() {
+  async getLastWish(): Promise<Wish[]> {
     return await this.wishesService.findLast();
   }
 
   @Get('top')
-  async getTopWish() {
+  async getTopWish(): Promise<Wish[]> {
     return await this.wishesService.findTop();
   }
 
   @UseInterceptors(PasswordWishInterceptor)
   @Get(':id')
-  async getWishById(@Param('id') id: number) {
-    return await this.wishesService.findById(id);
+  async getWishById(
+    @Request() { user: { id } },
+    @Param('id') wishId: number,
+  ): Promise<Wish> {
+    return await this.wishesService.findByIdWithOffer(id, wishId);
   }
 
   @Post()
   async create(
     @Request() { user: { id } },
     @Body() createWishDto: CreateWishDto,
-  ) {
+  ): Promise<Wish> {
     return await this.wishesService.create(id, createWishDto);
   }
 
