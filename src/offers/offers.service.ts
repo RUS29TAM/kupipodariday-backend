@@ -1,26 +1,60 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Offer } from '../entities/offer.entity';
+import { DataSource, Repository } from 'typeorm';
+import { UsersService } from '../users/users.service';
+import { WishesService } from '../wishes/wishes.service';
+import { ServerException } from '../exceptions/server.exception';
+import { ErrorCode } from '../exceptions/errors';
 
 @Injectable()
 export class OffersService {
-  create(createOfferDto: CreateOfferDto) {
-    return 'Это действие добавляет новое предложение';
-  }
+  constructor(
+    @InjectRepository(Offer)
+    private offerRepository: Repository<Offer>,
+    private usersService: UsersService,
+    private wishesService: WishesService,
+    private readonly dataSource: DataSource,
+  ) {}
 
-  findAll() {
-    return `Это действие возвращает все предложения`;
-  }
+  async create(userId, createOfferDto: CreateOfferDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
 
-  findOne(id: number) {
-    return `Это действие возвращает #${id} предложение`;
-  }
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
 
-  update(id: number, updateOfferDto: UpdateOfferDto) {
-    return `Это действие обновляет #${id} предложение`;
-  }
+      const item = await this.wishesService.findById(createOfferDto.itemId);
 
-  remove(id: number) {
-    return `Это действие удаляет #${id} предложение`;
+      if (userId === item.owner.id) {
+        throw new ServerException(ErrorCode.OfferForbidden);
+      }
+
+      const user = await this.usersService.findById(item.owner.id);
+
+      const totalRaised = Number(
+        (item.raised + createOfferDto.amount).toFixed(2),
+      );
+
+      if (totalRaised > item.price) {
+        throw new ServerException(ErrorCode.RaisedForbidden);
+      }
+
+      const offer = await this.offerRepository.save({
+        ...createOfferDto,
+        item,
+        user,
+      });
+
+      delete item.owner.password;
+      delete user.password;
+
+      return offer;
+    } catch (err) {
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
