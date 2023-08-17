@@ -38,7 +38,7 @@ export class UsersController {
   }
 
   @Get(':username')
-  async findUser(@Param() username: string) {
+  async findUser(@Param('username') username: string) {
     return this.usersService.findByUserName(username);
   }
   // @Post()
@@ -47,7 +47,7 @@ export class UsersController {
   // }
 
   @Get('username/wishes')
-  async findUserWishes(@Param() username: string) {
+  async findUserWishes(@Param('username') username: string) {
     const { id } = await this.usersService.findByUserName(username);
     return await this.usersService.findWishes(id);
   }
