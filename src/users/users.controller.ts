@@ -19,6 +19,9 @@ import { UserProfileRespDto } from '../auth/dto/user-profile-resp.dto';
 import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
 import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.filter';
 import { FindUserDto } from './dto/find-user.dto';
+import { PasswordWishInterceptor } from '../interceptors/password-wish.interceptor';
+import { Wish } from '../entities/wish.entity';
+import { UserWishesDto } from './dto/user-wishes.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -27,17 +30,17 @@ export class UsersController {
 
   @UseInterceptors(PasswordUserInterceptor)
   @Get('me')
-  @UseInterceptors(PasswordUserInterceptor)
   async findCurrentUser(
     @Request() { user: { id } },
   ): Promise<UserProfileRespDto> {
     return await this.usersService.findById(id);
   }
 
-  @UseInterceptors(PasswordUserInterceptor)
+  @UseInterceptors(PasswordWishInterceptor)
   @Get('me/wishes')
-  async findCurrentUserWishes(@Request() { user: { id } }) {
-    return this.usersService.findWishes(id);
+  async findCurrentUserWishes(@Request() { user: { id } }): Promise<Wish[]> {
+    const relations = ['wishes', 'wishes.owner', 'wishes.offers'];
+    return await this.usersService.findWishes(id, relations);
   }
 
   @UseInterceptors(PasswordUserInterceptor)
@@ -53,23 +56,17 @@ export class UsersController {
   async findUser(@Param('username') username: string) {
     return this.usersService.findByUserName(username);
   }
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.usersService.create(createUserDto);
-  // }
 
-  @UseInterceptors(PasswordUserInterceptor)
+  @UseInterceptors(PasswordWishInterceptor)
   @Get(':username/wishes')
-  async findUserWishes(@Param('username') username: string) {
+  async findUserWishes(
+    @Param('username') username: string,
+  ): Promise<UserWishesDto[]> {
     const { id } = await this.usersService.findByUserName(username);
-    return await this.usersService.findWishes(id);
+    const relations = ['wishes', 'wishes.owner', 'wishes.offers'];
+    return await this.usersService.findWishes(id, relations);
   }
-  //
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
-  //
+
   @Patch('me')
   @UseFilters(InvalidDataExceptionFilter)
   @UseInterceptors(PasswordUserInterceptor)
