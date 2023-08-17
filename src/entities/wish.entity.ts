@@ -19,8 +19,8 @@ export class Wish extends BaseEntity {
   @IsUrl()
   image!: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  @IsNumber()
+  @Column({ type: 'float' })
+  @IsNumber({ maxDecimalPlaces: 2 })
   price!: number;
 
   @Column({ type: 'float', default: 0 })
