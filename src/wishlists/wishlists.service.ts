@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWishlistDto } from './dto/create-wishlist.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Wishlist } from '../entities/wishlist.entity';
-import { DataSource, Repository } from 'typeorm';
-import { WishesService } from '../wishes/wishes.service';
-import { UsersService } from '../users/users.service';
+import {Injectable} from '@nestjs/common';
+import {CreateWishlistDto} from './dto/create-wishlist.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Wishlist} from '../entities/wishlist.entity';
+import {DataSource, Repository} from 'typeorm';
+import {WishesService} from '../wishes/wishes.service';
+import {UsersService} from '../users/users.service';
+import {ServerException} from "../exceptions/server.exception";
+import {ErrorCode} from "../exceptions/errors";
 
 @Injectable()
 export class WishlistsService {
@@ -43,5 +45,15 @@ export class WishlistsService {
 
       await queryRunner.release();
     }
+  }
+
+  async findAll() {
+    const wishlists = await this.wishlistRepository.find({
+      relations: ['owner', 'items'],
+    });
+    if (!wishlists) {
+      throw new ServerException(ErrorCode.WishlistsNotFound);
+    }
+    return wishlists;
   }
 }
