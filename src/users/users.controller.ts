@@ -24,6 +24,7 @@ import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.fil
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseInterceptors(PasswordUserInterceptor)
   @Get('me')
   @UseInterceptors(PasswordUserInterceptor)
   async findCurrentUser(
@@ -32,11 +33,13 @@ export class UsersController {
     return await this.usersService.findById(id);
   }
 
+  @UseInterceptors(PasswordUserInterceptor)
   @Get('me/wishes')
   async findCurrentUserWishes(@Request() { user: { id } }) {
     return this.usersService.findWishes(id);
   }
 
+  @UseInterceptors(PasswordUserInterceptor)
   @Get(':username')
   async findUser(@Param('username') username: string) {
     return this.usersService.findByUserName(username);
@@ -46,7 +49,8 @@ export class UsersController {
   //   return this.usersService.create(createUserDto);
   // }
 
-  @Get('username/wishes')
+  @UseInterceptors(PasswordUserInterceptor)
+  @Get(':username/wishes')
   async findUserWishes(@Param('username') username: string) {
     const { id } = await this.usersService.findByUserName(username);
     return await this.usersService.findWishes(id);

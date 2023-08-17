@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class PasswordWishInterceptor implements NestInterceptor {
@@ -12,6 +12,24 @@ export class PasswordWishInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    return;
+    return next.handle().pipe(
+      map((data) => {
+        if (Array.isArray(data)) {
+          return data.map((user) => {
+            const {
+              owner: { password, ...ownerWithoutPassword },
+              ...rest
+            } = user;
+            return { ...rest, owner: ownerWithoutPassword };
+          });
+        } else {
+          const {
+            owner: { password, ...ownerWithoutPassword },
+            ...rest
+          } = data;
+          return { ...rest, owner: ownerWithoutPassword };
+        }
+      }),
+    );
   }
 }

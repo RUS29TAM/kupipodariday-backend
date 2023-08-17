@@ -1,11 +1,11 @@
-import {Injectable} from '@nestjs/common';
-import {CreateWishDto} from './dto/create-wish.dto';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Wish} from '../entities/wish.entity';
-import {Repository} from 'typeorm';
-import {UsersService} from '../users/users.service';
-import {ServerException} from "../exceptions/server.exception";
-import {ErrorCode} from "../exceptions/errors";
+import { Injectable } from '@nestjs/common';
+import { CreateWishDto } from './dto/create-wish.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wish } from '../entities/wish.entity';
+import { Repository } from 'typeorm';
+import { UsersService } from '../users/users.service';
+import { ServerException } from '../exceptions/server.exception';
+import { ErrorCode } from '../exceptions/errors';
 
 @Injectable()
 export class WishesService {
@@ -48,5 +48,13 @@ export class WishesService {
       relations: ['owner'],
     });
     return wish;
+  }
+
+  async delete(userId: number, wishId: number) {
+    const wish = await this.findById(wishId);
+    if (userId !== wish.owner.id) {
+      throw new ServerException(ErrorCode.Forbidden);
+    }
+    return await this.wishRepository.delete(wishId);
   }
 }

@@ -14,8 +14,15 @@ export class PasswordUserInterceptor implements NestInterceptor {
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map((data) => {
-        const { password, ...rest } = data;
-        return rest;
+        if (Array.isArray(data)) {
+          return data.map((user) => {
+            const { password, ...rest } = user;
+            return rest;
+          });
+        } else {
+          const { password, ...rest } = data;
+          return rest;
+        }
       }),
     );
   }
