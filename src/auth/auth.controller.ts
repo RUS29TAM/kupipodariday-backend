@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   UseInterceptors,
+  UseFilters,
 } from '@nestjs/common';
 import { Auth } from 'typeorm';
 import { AuthService } from './auth.service';
@@ -20,7 +21,9 @@ import { UsersService } from '../users/users.service';
 import { SignupUserRespDto } from './dto/signup-user-resp.dto';
 import { LocalGuard } from './guards/local.guard';
 import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
+import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.filter';
 
+@UseFilters(InvalidDataExceptionFilter)
 @Controller()
 export class AuthController {
   constructor(
