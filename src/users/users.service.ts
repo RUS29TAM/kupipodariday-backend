@@ -1,13 +1,13 @@
-import {Injectable} from '@nestjs/common';
-import {CreateUserDto} from './dto/create-user.dto';
-import {InjectRepository} from '@nestjs/typeorm';
-import {User} from '../entities/user.entity';
-import {QueryFailedError, Repository} from 'typeorm';
-import {HashService} from '../hash/hash.service';
-import {ServerException} from '../exceptions/server.exception';
-import {ErrorCode} from '../exceptions/errors';
-import {UpdateUserDto} from './dto/update-user.dto';
-import {Wish} from '../entities/wish.entity';
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../entities/user.entity';
+import { QueryFailedError, Repository } from 'typeorm';
+import { HashService } from '../hash/hash.service';
+import { ServerException } from '../exceptions/server.exception';
+import { ErrorCode } from '../exceptions/errors';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Wish } from '../entities/wish.entity';
 
 @Injectable()
 export class UsersService {
