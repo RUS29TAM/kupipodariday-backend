@@ -7,7 +7,7 @@ import {
   IsUrl,
   Length,
 } from 'class-validator';
-import { Offer } from '../../entities/offer.entity';
+import { Offer } from '../../offers/entities/offer.entity';
 
 export class UserWishesDto {
   @IsInt()

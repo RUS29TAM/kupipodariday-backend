@@ -15,7 +15,7 @@ export class InvalidDataExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       message: 'Ошибка валидации переданных значений',
-      status,
+      status: exception.getStatus(),
     });
   }
 }

@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 import { HashService } from '../hash/hash.service';
 import { ServerException } from '../exceptions/server.exception';
 import { ErrorCode } from '../exceptions/errors';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Wish } from '../entities/wish.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
     private hashService: HashService,
   ) {}
 
@@ -39,7 +39,7 @@ export class UsersService {
     return this.findById(id);
   }
 
-  async findWishes(id: number, relations: string[]): Promise<Wish[]> {
+  async findWishes(id: number, relations: string[]) {
     const { wishes } = await this.usersRepository.findOne({
       where: { id },
       relations,

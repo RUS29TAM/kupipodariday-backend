@@ -8,10 +8,7 @@ import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class PasswordWishInterceptor implements NestInterceptor {
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler<any>,
-  ): Observable<any> | Promise<Observable<any>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
         if (Array.isArray(data)) {
@@ -23,7 +20,7 @@ export class PasswordWishInterceptor implements NestInterceptor {
             return { ...rest, owner: ownerWithoutPassword };
           });
         } else {
-          data?.offers?.map((offer: { user: { password: any } }) => {
+          data?.offers?.map((offer) => {
             delete offer.user.password;
             return offer;
           });

@@ -13,7 +13,7 @@ import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { PasswordWishInterceptor } from '../interceptors/password-wish.interceptor';
-import { Wish } from '../entities/wish.entity';
+import { Wish } from './entities/wish.entity';
 
 @UseGuards(JwtGuard)
 @Controller('wishes')

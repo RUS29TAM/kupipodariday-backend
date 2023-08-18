@@ -1,90 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
-import { User } from '../entities/user.entity';
+import { HashService } from '../hash/hash.service';
 import { ServerException } from '../exceptions/server.exception';
 import { ErrorCode } from '../exceptions/errors';
-
-// interface Auth {
-//   id: number;
-//   username: string;
-//   password: string;
-// }
+import { SignupUserRespDto } from '../users/dto/responce/signup-user-resp.dto';
+import { SigninUserRespDto } from '../users/dto/responce/signin-user-resp.dto';
 
 @Injectable()
 export class AuthService {
-  private bcrypt: any;
   constructor(
     private jwtService: JwtService,
-    private userService: UsersService,
-  ) {
-    this.bcrypt = require('bcrypt');
-  }
+    private usersService: UsersService,
+    private hashService: HashService,
+  ) {}
 
-  async auth(user: User) {
+  async auth(user: User): Promise<SigninUserRespDto> {
     const payload = { sub: user.id };
     return { access_token: this.jwtService.sign(payload) };
   }
 
-  async validatePassword(username: string, password: string) {
-    try {
-      const user = await this.userService.findByUserName(username);
+  async validatePassword(
+    username: string,
+    password: string,
+  ): Promise<SignupUserRespDto> {
+    const user = await this.usersService.findByUserName(username);
 
-      if (user) {
-        const isPasswordValid = await this.bcrypt.compare(
-          password,
-          user.password,
-        );
-
-        if (isPasswordValid) {
-          return { id: user.id, username: user.username };
-        }
-      }
-
-      return null;
-    } catch (error) {
-      console.error('Ошибка валидации пароля:', error);
+    if (!user) {
       throw new ServerException(ErrorCode.LoginOrPasswordIncorrect);
+    }
+
+    const isValid = await this.hashService.comparePassword(
+      password,
+      user.password,
+    );
+
+    if (!isValid) {
+      throw new ServerException(ErrorCode.LoginOrPasswordIncorrect);
+    } else {
+      const { password, ...result } = user;
+      return result;
     }
   }
 }
-
-// @Injectable()
-// export class AuthService {
-//   private readonly auths: Auth[] = [];
-//
-//   create(createAuthDto: CreateUserDto): Auth {
-//     const auth: { id: number } = {
-//       id: this.auths.length + 1,
-//       ...createAuthDto,
-//     };
-//     this.auths.push(<Auth>auth);
-//     return <Auth>auth;
-//   }
-//
-//   findAll(): Auth[] {
-//     return this.auths;
-//   }
-//
-//   findOne(id: number): Auth {
-//     const auth = this.auths.find((auth) => auth.id === id);
-//     if (!auth) {
-//       throw new Error(`Auth with ID ${id} not found`);
-//     }
-//     return auth;
-//   }
-//
-//   update(id: number, updateAuthDto: UpdateAuthDto): Auth {
-//     const auth = this.findOne(id);
-//     Object.assign(auth, updateAuthDto);
-//     return auth;
-//   }
-//
-//   remove(id: number): void {
-//     const index = this.auths.findIndex((auth) => auth.id === id);
-//     if (index === -1) {
-//       throw new Error(`Auth with ID ${id} not found`);
-//     }
-//     this.auths.splice(index, 1);
-//   }
-// }

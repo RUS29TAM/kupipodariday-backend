@@ -1,8 +1,8 @@
 import { BaseEntity } from 'src/entities/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { IsBoolean, IsNumber } from 'class-validator';
-import { User } from './user.entity';
-import { Wish } from './wish.entity';
+import { User } from '../../users/entities/user.entity';
+import { Wish } from '../../wishes/entities/wish.entity';
 
 @Entity()
 export class Offer extends BaseEntity {

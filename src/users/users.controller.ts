@@ -5,23 +5,22 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Request,
   UseGuards,
   UseInterceptors,
   UseFilters,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FindUserDto } from './dto/find-user.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
-import { UserProfileRespDto } from '../auth/dto/user-profile-resp.dto';
+import { UserProfileRespDto } from './dto/responce/user-profile-resp.dto';
 import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
 import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.filter';
-import { FindUserDto } from './dto/find-user.dto';
 import { PasswordWishInterceptor } from '../interceptors/password-wish.interceptor';
-import { Wish } from '../entities/wish.entity';
+import { Wish } from '../wishes/entities/wish.entity';
 import { UserWishesDto } from './dto/user-wishes.dto';
+import { UserPublicProfileRespDto } from './dto/responce/user-public-profile-resp.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -53,8 +52,10 @@ export class UsersController {
 
   @UseInterceptors(PasswordUserInterceptor)
   @Get(':username')
-  async findUser(@Param('username') username: string) {
-    return this.usersService.findByUserName(username);
+  async findUser(
+    @Param('username') username: string,
+  ): Promise<UserPublicProfileRespDto> {
+    return await this.usersService.findByUserName(username);
   }
 
   @UseInterceptors(PasswordWishInterceptor)

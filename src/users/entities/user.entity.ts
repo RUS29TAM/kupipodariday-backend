@@ -1,20 +1,20 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/entities/base.entity';
 import { IsEmail, IsString, IsUrl, Length } from 'class-validator';
-import { Wish } from './wish.entity';
-import { Offer } from './offer.entity';
-import { Wishlist } from './wishlist.entity';
+import { Wish } from '../../wishes/entities/wish.entity';
+import { Offer } from '../../offers/entities/offer.entity';
+import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 
 @Entity()
 export class User extends BaseEntity {
   @Column({ unique: true })
-  @IsString()
   @Length(1, 64)
-  username!: string;
+  @IsString()
+  username: string;
 
   @Column({ default: 'Пока ничего не рассказал о себе' })
-  @IsString()
   @Length(1, 200)
+  @IsString()
   about: string;
 
   @Column({ default: 'https://i.pravatar.cc/300' })
@@ -23,11 +23,11 @@ export class User extends BaseEntity {
 
   @Column({ unique: true })
   @IsEmail()
-  email!: string;
+  email: string;
 
   @Column()
   @IsString()
-  password!: string;
+  password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];

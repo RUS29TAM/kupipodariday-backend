@@ -6,7 +6,7 @@ export class HashService {
   async getHash(password: string): Promise<string> {
     const saltRounds = 10;
     const salt = await genSalt(saltRounds);
-    return hash(password, salt);
+    return await hash(password, salt);
   }
 
   async getUserWithHash<T extends { password?: string }>(
@@ -21,6 +21,6 @@ export class HashService {
   }
 
   async comparePassword(password: string, hash: string): Promise<boolean> {
-    return compare(password, hash);
+    return await compare(password, hash);
   }
 }

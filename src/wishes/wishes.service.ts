@@ -1,11 +1,11 @@
-import {ForbiddenException, Injectable} from '@nestjs/common';
-import {CreateWishDto} from './dto/create-wish.dto';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Wish} from '../entities/wish.entity';
-import {DataSource, Repository} from 'typeorm';
-import {UsersService} from '../users/users.service';
-import {ServerException} from '../exceptions/server.exception';
-import {ErrorCode} from '../exceptions/errors';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { CreateWishDto } from './dto/create-wish.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsersService } from '../users/users.service';
+import { Wish } from './entities/wish.entity';
+import { ServerException } from '../exceptions/server.exception';
+import { ErrorCode } from '../exceptions/errors';
 
 @Injectable()
 export class WishesService {
@@ -35,6 +35,7 @@ export class WishesService {
 
   async update(userId: number, wishId: number, updateData: any) {
     const wish = await this.findById(wishId);
+
     if (userId !== wish.owner.id) {
       throw new ForbiddenException('Вы не можете обновлять чужие подарки');
     }
@@ -53,7 +54,7 @@ export class WishesService {
     }
   }
 
-  async getWishListById(ids: number[]): Promise<Wish[]> {
+  async getWishListByIds(ids: number[]): Promise<Wish[]> {
     const wishes = await this.wishRepository
       .createQueryBuilder('item')
       .where('item.id IN (:...ids)', { ids })
@@ -70,6 +71,7 @@ export class WishesService {
       order: { createdAt: 'desc' },
       take: 40,
     });
+
     if (!wishes) {
       throw new ServerException(ErrorCode.WishesNotFound);
     }
@@ -85,6 +87,7 @@ export class WishesService {
     if (!wishes) {
       throw new ServerException(ErrorCode.WishesNotFound);
     }
+
     return wishes;
   }
 
@@ -93,7 +96,6 @@ export class WishesService {
       where: { id },
       relations: ['owner'],
     });
-
     if (!wish) {
       throw new ServerException(ErrorCode.WishNotFound);
     }
@@ -129,27 +131,22 @@ export class WishesService {
 
   async copy(userId: number, wishId: number) {
     const queryRunner = this.dataSource.createQueryRunner();
-
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-
       const { id, createdAt, updatedAt, owner, ...wish } = await this.findById(
         wishId,
       );
       const copiedWish = await this.create(userId, wish);
-
       await this.wishRepository.update(wishId, {
         copied: copiedWish.copied + 1,
       });
 
       await queryRunner.commitTransaction();
-
       return copiedWish;
     } catch (err) {
       await queryRunner.rollbackTransaction();
-
-      throw err; // Пробросим ошибку дальше для обработки на вышестоящем уровне
+      // throw err; // Пробросим ошибку дальше для обработки на вышестоящем уровне
     } finally {
       await queryRunner.release();
     }

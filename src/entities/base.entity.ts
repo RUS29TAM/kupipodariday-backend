@@ -1,13 +1,10 @@
-import { IsInt, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsDate } from 'class-validator';
 import {
-  Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Column,
 } from 'typeorm';
 
-@Entity()
 export class BaseEntity {
   @PrimaryGeneratedColumn()
   @IsInt()
@@ -20,19 +17,4 @@ export class BaseEntity {
   @UpdateDateColumn()
   @IsDate()
   updatedAt: Date;
-
-  @Column()
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @Column()
-  @IsNotEmpty()
-  @IsString()
-  description: string;
-
-  @Column()
-  @IsNotEmpty()
-  @IsInt()
-  price: number;
 }

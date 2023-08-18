@@ -1,35 +1,19 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-// import { BaseEntity } from '../entities/base.entity';
-import { User } from '../entities/user.entity';
-import { Offer } from '../entities/offer.entity';
-import { Wish } from '../entities/wish.entity';
-import { Wishlist } from '../entities/wishlist.entity';
+import { User } from '../users/entities/user.entity';
+import { Offer } from '../offers/entities/offer.entity';
+import { Wish } from '../wishes/entities/wish.entity';
+import { Wishlist } from '../wishlists/entities/wishlist.entity';
 
-interface DatabaseConfig {
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  database: string;
-  synchronize: boolean;
-}
-
-export const getDatabaseConfig = (
-  configService: ConfigService,
-): TypeOrmModuleOptions => {
-  const databaseConfig: DatabaseConfig = {
-    host: configService.get<string>('POSTGRES_HOST'),
-    port: configService.get<number>('POSTGRES_PORT'),
-    username: configService.get<string>('POSTGRES_USERNAME'),
-    password: configService.get<string>('POSTGRES_PASSWORD'),
-    database: configService.get<string>('POSTGRES_DB'),
-    synchronize: configService.get<boolean>('POSTGRES_SYNCHRONIZE'),
-  };
-
+export default (configService: ConfigService): TypeOrmModuleOptions => {
   return {
     type: 'postgres',
-    ...databaseConfig,
-    entities: [User, Offer, Wish, Wishlist],
+    host: configService.get('POSTGRES_HOST'),
+    port: configService.get('POSTGRES_PORT'),
+    username: configService.get('POSTGRES_USERNAME'),
+    password: configService.get('POSTGRES_PASSWORD'),
+    database: configService.get('POSTGRES_DB'),
+    entities: [User, Wish, Wishlist, Offer],
+    synchronize: configService.get('POSTGRES_SYNCHRONIZE'),
   };
 };

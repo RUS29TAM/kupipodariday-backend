@@ -1,44 +1,44 @@
-import { BaseEntity } from 'src/entities/base.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { IsInt, IsNumber, IsString, IsUrl, Length } from 'class-validator';
-import { User } from './user.entity';
-import { Offer } from './offer.entity';
+import { User } from '../../users/entities/user.entity';
+import { Offer } from '../../offers/entities/offer.entity';
+import { BaseEntity } from 'src/entities/base.entity';
 
 @Entity()
 export class Wish extends BaseEntity {
   @Column()
   @Length(1, 250)
   @IsString()
-  name!: string;
+  name: string;
 
   @Column()
   @IsUrl()
-  link!: string;
+  link: string;
 
   @Column()
   @IsUrl()
-  image!: string;
+  image: string;
 
   @Column({ type: 'float' })
   @IsNumber({ maxDecimalPlaces: 2 })
-  price!: number;
+  price: number;
 
   @Column({ type: 'float', default: 0 })
   @IsNumber({ maxDecimalPlaces: 2 })
-  raised!: number;
+  raised: number;
 
   @Column({ type: 'integer', default: 0 })
   @IsInt()
-  copied!: number;
+  copied: number;
 
   @Column()
   @Length(1, 1024)
   @IsString()
-  description!: string;
+  description: string;
 
   @ManyToOne(() => User, (user) => user.wishes)
   owner: User;
 
-  @ManyToOne(() => Offer, (offer) => offer.item)
+  @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 }
