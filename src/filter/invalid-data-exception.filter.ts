@@ -12,7 +12,6 @@ export class InvalidDataExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
-
     response.status(status).json({
       message: 'Ошибка валидации переданных значений',
       status: exception.getStatus(),

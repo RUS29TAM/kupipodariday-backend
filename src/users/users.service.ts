@@ -29,6 +29,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    console.log(id, updateUserDto);
     const newUserData = updateUserDto.hasOwnProperty('password')
       ? await this.hashService.getUserWithHash<UpdateUserDto>(updateUserDto)
       : updateUserDto;
