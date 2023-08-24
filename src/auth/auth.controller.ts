@@ -26,13 +26,15 @@ export class AuthController {
 
   @UseGuards(LocalGuard)
   @Post('signin')
-  signin(@Request() { user }): Promise<SigninUserRespDto> {
-    return this.authService.auth(user);
+  async signin(@Request() { user }): Promise<SigninUserRespDto> {
+    return await this.authService.auth(user);
   }
 
   @UseInterceptors(PasswordUserInterceptor)
   @Post('signup')
-  signup(@Body() createUserDto: CreateUserDto): Promise<SignupUserRespDto> {
-    return this.usersService.create(createUserDto);
+  async signup(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<SignupUserRespDto> {
+    return await this.usersService.create(createUserDto);
   }
 }
