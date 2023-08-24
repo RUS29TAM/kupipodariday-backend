@@ -11,9 +11,9 @@ import { SigninUserRespDto } from '../users/dto/responce/signin-user-resp.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    private usersService: UsersService,
-    private hashService: HashService,
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+    private readonly hashService: HashService,
   ) {}
 
   async auth(user: User): Promise<SigninUserRespDto> {
