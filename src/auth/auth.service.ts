@@ -5,8 +5,8 @@ import { UsersService } from '../users/users.service';
 import { HashService } from '../hash/hash.service';
 import { ServerException } from '../exceptions/server.exception';
 import { ErrorCode } from '../exceptions/errors';
-import { SignupUserRespDto } from '../users/dto/responce/signup-user-resp.dto';
-import { SigninUserRespDto } from '../users/dto/responce/signin-user-resp.dto';
+import { SignupUserRespDto } from '../users/dto/signup-user-resp.dto';
+import { SigninUserRespDto } from '../users/dto/signin-user-resp.dto';
 
 @Injectable()
 export class AuthService {

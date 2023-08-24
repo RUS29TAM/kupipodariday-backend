@@ -14,13 +14,13 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
-import { UserProfileRespDto } from './dto/responce/user-profile-resp.dto';
+import { UserProfileRespDto } from './dto/user-profile-resp.dto';
 import { PasswordUserInterceptor } from '../interceptors/password-user.interceptor';
 import { InvalidDataExceptionFilter } from '../filter/invalid-data-exception.filter';
 import { PasswordWishInterceptor } from '../interceptors/password-wish.interceptor';
 import { Wish } from '../wishes/entities/wish.entity';
 import { UserWishesDto } from './dto/user-wishes.dto';
-import { UserPublicProfileRespDto } from './dto/responce/user-public-profile-resp.dto';
+import { UserPublicProfileRespDto } from './dto/user-public-profile-resp.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
