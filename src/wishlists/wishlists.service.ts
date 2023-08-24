@@ -17,13 +17,15 @@ export class WishlistsService {
     private readonly usersService: UsersService,
     private readonly dataSource: DataSource,
   ) {}
+
   async create(userId: number, createWishlistDto: CreateWishlistDto) {
     const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const { itemsId, ...rest } = createWishlistDto;
 
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const { itemsId, ...rest } = createWishlistDto;
       const items = await this.wishesService.getWishListByIds(itemsId);
       const owner = await this.usersService.findById(userId);
 
@@ -32,11 +34,15 @@ export class WishlistsService {
         items,
         owner,
       });
-      await queryRunner.commitTransaction();
+
       return wishlist;
     } catch (err) {
-      await queryRunner.rollbackTransaction();
+      throw err;
     } finally {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
       await queryRunner.release();
     }
   }
@@ -45,11 +51,9 @@ export class WishlistsService {
     const wishlists = await this.wishlistRepository.find({
       relations: ['owner', 'items'],
     });
-
     if (!wishlists) {
       throw new ServerException(ErrorCode.WishlistsNotFound);
     }
-
     return wishlists;
   }
 
@@ -58,11 +62,9 @@ export class WishlistsService {
       where: { id },
       relations: ['owner', 'items'],
     });
-
     if (!wishlist) {
       throw new ServerException(ErrorCode.WishlistsNotFound);
     }
-
     return wishlist;
   }
 
@@ -72,7 +74,6 @@ export class WishlistsService {
     if (userId !== wishlist.owner.id) {
       throw new ServerException(ErrorCode.DeleteForbidden);
     }
-
     return await this.wishlistRepository.delete(wishListId);
   }
 }
