@@ -1,8 +1,8 @@
 {
   "name": "kupipodariday-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Server part for the kupipodariday application (an application for making a wish list)",
+  "author": "@RUS29TAM",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
